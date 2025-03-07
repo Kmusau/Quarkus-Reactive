@@ -7,6 +7,7 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import org.acme.dtos.ApiResponse;
 import org.acme.services.CarsService;
 
 @ApplicationScoped
@@ -18,7 +19,7 @@ public class Controller {
     @GET
     @Path("cars/years")
     @Produces(MediaType.APPLICATION_JSON)
-    public Uni<Integer[]> fetchCarManufacturingYears() {
+    public Uni<ApiResponse> fetchCarManufacturingYears() {
         return carsService.fetchCarManufacturingYears();
     }
 

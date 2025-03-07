@@ -7,7 +7,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.acme.configurations.Configs;
+import org.acme.dtos.ApiResponse;
 import org.acme.restclientservices.BaseService;
+
+import java.util.Arrays;
 
 @Slf4j
 @ApplicationScoped
@@ -18,10 +21,18 @@ public class CarsService implements BaseService {
     BaseService baseService;
     ObjectMapper objectMapper = new ObjectMapper();
 
-    public Uni<Integer[]> fetchCarManufacturingYears() {
+    public Uni<ApiResponse> fetchCarManufacturingYears() {
         return baseService.getCarManufacturingYears(configs.rapidCarApiUrl())
                 .map(Unchecked.function(response -> objectMapper.readValue(response.readEntity(String.class), Integer[].class)))
-                .invoke(response -> log.info("Received - {} responses from Rapid API", response.length));
+                .invoke(response -> log.info("Received - {} responses from Rapid API", response.length))
+                .map(this::formulateResponse);
+    }
+
+    public ApiResponse formulateResponse(Integer[] apiResponse) {
+        ApiResponse response = new ApiResponse();
+        response.setMessage("Successfully fetched car manufacturing years");
+        response.setData(Arrays.stream(apiResponse).sorted().toList());
+        return response;
     }
 
 }
